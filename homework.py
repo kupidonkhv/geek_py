@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sys import argv
 from functools import reduce
 from itertools import cycle
@@ -60,3 +61,5 @@ def fact():
 
 for i in fact():
     print(f"Объект: {fact()}; Факториал: {i}")
+=======
+>>>>>>> Lesson_#1
