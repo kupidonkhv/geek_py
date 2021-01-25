@@ -10,7 +10,7 @@ print(f"Зарплата сотрудника: {(int(hours)*int(price))}; Пре
 
 #2
 x = [300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55]
-y = [i for n,i in enumerate (x) if x[n]> x[n-1]]
+y = [i for n, i in enumerate(x) if x[n]> x[n-1] and n > 0]
 print(f'Result: {y}')
 
 
