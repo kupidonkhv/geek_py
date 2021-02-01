@@ -1,62 +1,123 @@
-from sys import argv
-from functools import reduce
-from itertools import cycle
-import math
-
 #1
-script_name, hours, price, premia = argv
-print(f"Зарплата сотрудника: {(int(hours)*int(price))}; Премия: {premia}; Итого: {(int(hours)*int(price))+int(premia)}")
+out_f = open("my_file_0001.txt", "w")
+inp = input("Введите новую строку. Для окончания введите пустую строку.")
+while inp != "":
+    out_f.write(f"{inp}\n")
+    inp = input("Введите новую строку. Для окончания введите пустую строку.")
+
+out_f.close()
 
 
 #2
-x = [300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55]
-y = [i for n, i in enumerate(x) if x[n]> x[n-1] and n > 0]
-print(f'Result: {y}')
+word = 0
+words = []
+for line in open("text_6.txt"):
+    pos = 'out'
+    for letter in line:
+        if letter != ' ' and pos == 'out':
+            word += 1
+            pos = 'in'
+        elif letter == ' ':
+            pos = 'out'
+    words.append(word)
+    word = 0
+print("Строк в указанном файле:", len(words))
+for i in range(len(words)):
+    print(f"В строке {i+1} - слов: {words[i]}")
 
 
 #3
-print(f'Result: {[i for n,i in enumerate (range (20,241)) if i % 20 ==0 or i % 21 ==0]}')
+file = open("text_3.txt", "r", encoding="utf-8")
+users = {}
+for line in file:
+    line = line.replace("\n", "")
+    line = line.split(" ")
+    users[line[0]] = float(line[1])
+file.close()
+
+print("Зарплаты менее 20 тыс. получают:")
+for fio, oklad in users.items():
+    if oklad < 20000:
+        print(fio)
+
+print(f"Зарплатный фонд: {sum(users.values())}")
+print(f"Средняя зарплата на сотрудника ({len(users)} человек): {sum(users.values())/len(users)}")
 
 
 #4
-x = [2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11]
-print(f'Result: {[i for n,i in enumerate (x) if x.count(i)==1]}')
+from deep_translator import GoogleTranslator
+file = open("text_4.txt", "r", encoding="utf-8")
+my_list = ""
+for line in file:
+    line = line.replace('\n', '').split(" - ")
+    my_list = my_list + GoogleTranslator(source='auto', target='ru').translate(line[0]) + "\n"
+file.close()
+
+out_f = open("out_file.txt", "w")
+out_f.write(my_list)
+out_f.close()
 
 
 #5
-print(reduce(lambda x, y: x + y, list(range(100, 1001, 2))))
+with open('file_5.txt', 'w+', encoding="utf-8") as file_obj:
+    line = input('Введите цифры через пробел \n')
+    file_obj.writelines(line)
+    num = line.split()
+    print(sum(map(int, num)))
 
 
-#6 а)
-script_name, start, end = argv
-my_list = list(range(int(start), int(end)+1))
-for i, x in enumerate(my_list):
-    print(x)
+#6
+subj = {}
+with open('text_6.txt', 'r', encoding="utf-8") as file:
+    for line in file:
+        lecture_int = practice_int = lab_int = 0
 
+        subject, lecture, practice, lab = line.split()
 
-#6 б)  выводит в строку
-script_name, text, count = argv
-my_list = list("ABC" * int(5))
-print(''.join(my_list))
+        lecture_list = [int(num) for num in filter(lambda num: num.isnumeric(), lecture)]
+        practice_list = [int(num) for num in filter(lambda num: num.isnumeric(), practice)]
+        lab_list = [int(num) for num in filter(lambda num: num.isnumeric(), lab)]
 
+        if type(lecture_list) == list and lecture_list != []:
+            lecture_int = ''.join(str(e) for e in lecture_list)
+        else:
+            lecture_int = 0
+        if type(practice_list) == list and practice_list != []:
+            practice_int = ''.join(str(e) for e in practice_list)
+        else:
+            practice_int = 0
+        if type(lab_list) == list and lab_list != []:
+            lab_int = ''.join(str(e) for e in lab_list)
+        else:
+            lab_int = 0
 
-#6 б) - ещё вариант (выводит построчно):
-script_name, text, count = argv
-с = int(1)
-for el in cycle([text]):
-    if с >= int(count):
-        break
-    print(el)
-    с += 1
+        print(f"Общее количество часов по {subject} {int(lecture_int) + int(practice_int) + int(lab_int)}")
+
 
 #7
-script_name, num = argv
+import json
 
+profit = {}
+pr = {}
+prof = 0
+prof_aver = 0
+i = 0
+with open('text_7.txt', 'r+', encoding="utf-8") as file:
+    for line in file:
+        f_n, name, earning, damage = line.split()
+        profit[name] = int(earning) - int(damage)
+        if profit.setdefault(name) >= 0:
+            prof = prof + profit.setdefault(name)
+        i += 1
+        if i >= 0:
+            prof_aver = prof / i
+    else:
+        pr_sr = ({'Средняя прибыль компаний': round(prof_aver)})
+        profit.update(pr_sr)
+    print(f'Прибыль всех компании: - {prof:.2f}')
+    print(f'Средняя прибыль всех компаний: - {round(prof_aver):.2f}')
+    print(f'Сводные результаты компаний: - {profit}')
 
-def fact():
-    for i in range(1, int(num)):
-        yield math.factorial(i)
-
-
-for i in fact():
-    print(f"Объект: {fact()}; Факториал: {i}")
+with open('test_7.json', 'w+', encoding="utf-8") as write_js:
+    json.dump(profit, write_js)
+print(json.dumps(profit), ensure_ascii=False)
