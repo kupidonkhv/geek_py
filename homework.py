@@ -1,160 +1,133 @@
 #1
-from time import sleep
+class Matrix:
+    def __init__(self, lists):
+        self.lists = lists
+
+    def __str__(self):
+        for row in self.lists:
+            for i in row:
+                print(f"{i:4}", end="")
+            print()
+        return ''
+
+    def __add__(self, other):
+        if len(self.lists) == len(other.lists):
+            what_is_the_matrix = []
+            for i in range(len(self.lists)):
+                if len(self.lists[i]) == len(other.lists[i]):
+                    second_matrix = []
+                    for a in range(len(other.lists[i])):
+                        second_matrix.insert(a, self.lists[i][a] + other.lists[i][a])
+                    what_is_the_matrix.insert(i, second_matrix)
+                else:
+                    print("Матрицы разного размера!")
+                    return
+            return Matrix(what_is_the_matrix) #Сложение более 2-х матриц. Сделал для себя, чтоб понять.
+        else:
+            print("Матрицы разного размера!")
+            return
 
 
-class SvetoFor:
-    __text = ['Красный', 'Желтый', 'Зеленый']
-    __color = ['\033[31m {}', '\033[33m {}', '\033[32m {}']
-
-    def runn(self):
-        i = 0
-        while i != 3:
-            print(SvetoFor.__color[i].format(SvetoFor.__text[i]))
-            if i == 0:
-                sleep(7)
-            elif i == 1:
-                sleep(2)
-            elif i == 2:
-                sleep(5)
-            i += 1
+m_1 = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+m_2 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
+m_3 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
+print(type(m_1 + m_2))
+print(m_1 + m_2)
+print(m_1 + m_2 + m_3)
 
 
-while True:
-    t = SvetoFor()
-    t.runn()
+#1 - Вариант с numpy.. numpy КРУТ!!!
+import numpy as np
+
+
+class Matrix:
+    def __init__(self, lists):
+        self.lists = lists
+
+    def __str__(self):
+        for row in self.lists:
+            for i in row:
+                print(f"{i:4}", end="")
+        return
+
+    def __add__(self, other):
+        try:
+            return np.array(self.lists) + np.array(other.lists)
+        except ValueError:
+            return "Матрицы разного размера!"
+
+
+m_1 = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+m_2 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
+print(m_1 + m_2)
 
 
 #2
-class Road:
-
-    def __init__(self, length, width):
-        self._length = length
-        self._width = width
-        self.weight = 25
-        self.height = 5
-
-    def asphalt_mass(self):
-        asphalt_mass = self._length * self._width * self.weight * self.height / 1000
-        print(f'масса асфальта для покрытия одного кв метра дороги асфальтом, толщиной в 1 см: {round(asphalt_mass)}')
+from abc import ABC, abstractmethod
 
 
-r = Road(5000, 20)
-r.asphalt_mass()
+class Clothes(ABC):
+    def __init__(self, param):
+        self.param = param
+
+    def __str__(self):
+        return f"{self.param}"
+
+    @property
+    def t_summ(self):
+        return f'Сумма затраченной ткани равна: {self.param / 6.5 + 0.5 + (2 * self.param + 0.3) / 100 :.2f}'
+
+
+class Coat(Clothes):
+    def count(self):
+        return f"На пальто ушло ткани: {self.param / 6.5 + 0.5 :.2f}"
+
+
+class Suit(Clothes):
+    def count(self):
+        return f"На костюм ушло ткани: {(2 * self.param + 0.3) / 100 :.2f}"
+
+
+coat = Coat(22)
+suit = Suit(22)
+print(coat.count())
+print(suit.count())
+print(coat.t_summ)
 
 
 #3
-class Worker:
+class Cell:
+    def __init__(self, quantity):
+        self.quantity = quantity
 
-    def __init__(self, name, surname, position, wage, bonus):
-        self.name = name
-        self.surname = surname
-        self.position = position
-        self._income = {"wage": int(wage), "bonus": int(bonus)}
+    def make_order(self, rows):
+        result = ''
+        for i in range(int(self.quantity // rows)):
+            result += '@' * rows + '\n'
+        result += '@' * (self.quantity % rows) + '\n'
+        return result
 
+    def __str__(self):
+        return f'{self.quantity}'
 
-class Position(Worker):
-    def __init__(self, name, surname, position, wage, bonus):
-        super().__init__(name, surname, position, wage, bonus)
+    def __sub__(self, other):
+        return Cell(self.quantity - other.quantity)
 
-    def get_full_name(self):
-        return self.name + ' ' + self.surname
+    def __truediv__(self, other):
+        return Cell(self.quantity // other.quantity)
 
-    def get_total_income(self):
-        return self._income["wage"] + self._income["bonus"]
+    def __mul__(self, other):
+        return Cell(self.quantity * other.quantity)
 
-
-p = Position('Сергей', 'Алексейцев', 'Кодер', '100000', '100000')
-print(p.get_full_name(), p.get_total_income())
-
-
-#4
-class Car:
-
-    def __init__(self, name, speed, color, is_police=False):
-        self.name = name
-        self.speed = speed
-        self.color = color
-        self.is_police = is_police
-
-    def go(self):
-        return f'Машина {self.name} поехала.'
-
-    def stop(self):
-        return f'\n{self.name} остановилась.'
-
-    def turn(self, direction):
-        return f'\nМашина {self.name} повернула {direction}'
-
-    def show_speed(self):
-        return f'\nСкорость машины: {self.speed}'
+    def __add__(self, other):
+        return Cell(self.quantity + other.quantity)
 
 
-class TownCar(Car):
-    def show_speed(self):
-        if self.speed > 60:
-            return f'\nПревышении скорости {self.speed}!'
+cell = Cell(4)
+cell_2 = Cell(30)
+print(cell + cell_2)
+print(cell - cell_2)
+print(cell * cell_2)
+print(cell / cell_2)
 
-
-class SportCar(Car):
-    def show_speed(self):
-        if self.speed > 300:
-            return f'\nПревышении скорости {self.speed}!'
-
-
-class WorkCar(Car):
-    def show_speed(self):
-        if self.speed > 40:
-            return f'\nПревышении скорости: {self.speed}'
-
-
-class PoliceCar(Car):
-    def turn_on_flashing_light(self):
-        return f'\nИииииууу Иииииууу Иииииууу Иииииууу!'
-
-    def piu_piu(self):
-        return f'\nСтреляем по преследуему!'
-
-
-town = TownCar('Audi TT', 70, 'blue', False)
-print(town.go(), town.show_speed(), town.turn('направо'), town.turn('направо'), town.stop())
-
-sport = SportCar('Lamborghini Diablo', 170, 'синяя', False)
-print(sport.go(), sport.show_speed(), sport.turn('налево'), sport.stop())
-
-work = WorkCar('МАЗ', 30, 'красная', False)
-print(work.go(), work.show_speed(), work.turn('направо'), work.stop())
-
-police = PoliceCar('Бэтмобиль', 100, 'жёлтая', True)
-print(police.go(), police.turn_on_flashing_light(), police.show_speed(), police.turn('полицейский разворот'), police.go(), police.turn('направо'), police.piu_piu(), police.stop())
-
-
-#5
-class Stationery:
-    def __init__(self, title):
-        self.title = title
-
-    def draw(self):
-        return f'Запуск отрисовки'
-
-
-class Pen(Stationery):
-    def draw(self):
-        return f'Запуск отрисовки {self.title}'
-
-
-class Pencil(Stationery):
-    def draw(self):
-        return f'Запуск отрисовки {self.title}'
-
-
-class Handle(Stationery):
-    def draw(self):
-        return f'Запуск отрисовки {self.title}'
-
-
-pen = Pen('ручкой')
-print(pen.draw())
-pencil = Pencil('карандашем')
-print(pencil.draw())
-handle = Handle('маркером')
-print(handle.draw())
+print(cell_2.make_order(9))
