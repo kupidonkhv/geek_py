@@ -1,133 +1,169 @@
 #1
-class Matrix:
-    def __init__(self, lists):
-        self.lists = lists
+class DataForrmatterrr:
+    def __init__(self, inp_date):
+        self.inp_date = inp_date.split('-')
 
-    def __str__(self):
-        for row in self.lists:
-            for i in row:
-                print(f"{i:4}", end="")
-            print()
-        return ''
-
-    def __add__(self, other):
-        if len(self.lists) == len(other.lists):
-            what_is_the_matrix = []
-            for i in range(len(self.lists)):
-                if len(self.lists[i]) == len(other.lists[i]):
-                    second_matrix = []
-                    for a in range(len(other.lists[i])):
-                        second_matrix.insert(a, self.lists[i][a] + other.lists[i][a])
-                    what_is_the_matrix.insert(i, second_matrix)
-                else:
-                    print("Матрицы разного размера!")
-                    return
-            return Matrix(what_is_the_matrix) #Сложение более 2-х матриц. Сделал для себя, чтоб понять.
-        else:
-            print("Матрицы разного размера!")
-            return
-
-
-m_1 = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-m_2 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
-m_3 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
-print(type(m_1 + m_2))
-print(m_1 + m_2)
-print(m_1 + m_2 + m_3)
-
-
-#1 - Вариант с numpy.. numpy КРУТ!!!
-import numpy as np
-
-
-class Matrix:
-    def __init__(self, lists):
-        self.lists = lists
-
-    def __str__(self):
-        for row in self.lists:
-            for i in row:
-                print(f"{i:4}", end="")
-        return
-
-    def __add__(self, other):
+    @classmethod
+    def format_date(cls, inp_date):
         try:
-            return np.array(self.lists) + np.array(other.lists)
+            day, month, year = [int(el) for el in inp_date.split('.')]
+            format_date_type = '{0}\n{1}\n{2}'.format((type(day), day), (type(month), month), (type(year), year))
+            return format_date_type
         except ValueError:
-            return "Матрицы разного размера!"
+            return 'Некорректный формат даты.'
+
+    @staticmethod
+    def validate(inp_date):
+        try:
+            day, month, year = inp_date.split('.')
+            datetime.date(int(year), int(month), int(day))
+            return 'Корректный формат даты.'
+        except ValueError:
+            return 'Некорректный формат даты.'
 
 
-m_1 = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-m_2 = Matrix([[7, 6, 5], [4, 33, 12], [14, 11, -5]])
-print(m_1 + m_2)
+print('Вы записали: {0}'.format('05-03-2020'))
+print(DataForrmatterrr.validate('05-03-2020'))
+print('Вы записали: {0}'.format('02-02'))
+print(DataForrmatterrr.format_date('02-02'))
+print('Вы записали: {0}'.format('4445465474'))
+print(DataForrmatterrr.format_date('5454354354684313857'))
+print('Вы записали: {0}'.format('1-45-51'))
+print(DataForrmatterrr.validate('1-45-51'))
 
 
 #2
-from abc import ABC, abstractmethod
+class DivZero(Exception):
+    def __init__(self, pos_arg):
+        self.pos_arg = pos_arg
 
 
-class Clothes(ABC):
-    def __init__(self, param):
-        self.param = param
-
-    def __str__(self):
-        return f"{self.param}"
-
-    @property
-    def t_summ(self):
-        return f'Сумма затраченной ткани равна: {self.param / 6.5 + 0.5 + (2 * self.param + 0.3) / 100 :.2f}'
+def division(param_1, param_2):
+    if param_2 == 0:
+        raise DivZero('Невозможно деление на ноль')
+    else:
+        param_res = param_1 / param_2
+        print('При делении {0} на {1} получилось {2}'.format(param_1, param_2, param_res))
+    return param_1 / param_2
 
 
-class Coat(Clothes):
-    def count(self):
-        return f"На пальто ушло ткани: {self.param / 6.5 + 0.5 :.2f}"
-
-
-class Suit(Clothes):
-    def count(self):
-        return f"На костюм ушло ткани: {(2 * self.param + 0.3) / 100 :.2f}"
-
-
-coat = Coat(22)
-suit = Suit(22)
-print(coat.count())
-print(suit.count())
-print(coat.t_summ)
+try:
+    division(int(input('Делимое\n')), int(input('Делитель\n')))
+except DivZero as pos_arg:
+    print('{0}'.format(pos_arg))
 
 
 #3
-class Cell:
-    def __init__(self, quantity):
-        self.quantity = quantity
+class ExceptionType(Exception):
+    def __init__(self, param):
+        self.text = param
 
-    def make_order(self, rows):
-        result = ''
-        for i in range(int(self.quantity // rows)):
-            result += '@' * rows + '\n'
-        result += '@' * (self.quantity % rows) + '\n'
-        return result
+
+list_num = []
+
+
+def num_check(el):
+    if el.isdigit():
+        list_num.append(el)
+    else:
+        raise ExceptionType('Необходимо ввести только число')
+
+
+while True:
+    el = input('Введите число (для выхода введите stop)\n')
+    try:
+        if el == 'stop':
+            print(list_num)
+            break
+        else:
+            num_check(el)
+    except ExceptionType:
+        print('Необходимо ввести только число')
+
+
+#4, 5, 6
+class Sklad:
+
+    def __init__(self, name, price, quantity, number_of_lists, *args):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.numb = number_of_lists
+        self.my_store_full = []
+        self.my_store = []
+        self.my_unit = {'Модель устройства': self.name, 'Цена за ед': self.price, 'Количество': self.quantity}
 
     def __str__(self):
-        return f'{self.quantity}'
+        return f'{self.name} цена {self.price} количество {self.quantity}'
 
-    def __sub__(self, other):
-        return Cell(self.quantity - other.quantity)
+    def reception(self):
+        try:
+            unit = input(f'Введите наименование ')
+            unit_p = int(input(f'Введите цену за ед '))
+            unit_q = int(input(f'Введите количество '))
+            unique = {'Модель устройства': unit, 'Цена за ед': unit_p, 'Количество': unit_q}
+            self.my_unit.update(unique)
+            self.my_store.append(self.my_unit)
+            print(f'Текущий список -\n {self.my_store}')
+        except:
+            return f'Ошибка ввода данных'
 
-    def __truediv__(self, other):
-        return Cell(self.quantity // other.quantity)
+        print(f'Для выхода - Q, продолжение - Enter')
+        q = input(f'---> ')
+        if q == 'Q' or q == 'q':
+            self.my_store_full.append(self.my_store)
+            print(f'Весь склад -\n {self.my_store_full}')
+            return f'Выход'
+        else:
+            return Sklad.reception(self)
 
-    def __mul__(self, other):
-        return Cell(self.quantity * other.quantity)
+
+class Printer(Sklad):
+    def to_print(self):
+        return f'to print smth {self.numb} times'
+
+
+class Scanner(Sklad):
+    def to_scan(self):
+        return f'to scan smth {self.numb} times'
+
+
+class Copier(Sklad):
+    def to_copier(self):
+        return f'to copier smth  {self.numb} times'
+
+
+unit_1 = Printer('hp', 2000, 5, 10)
+unit_2 = Scanner('Canon', 1200, 5, 10)
+unit_3 = Copier('Xerox', 1500, 1, 15)
+print(unit_1.reception())
+print(unit_2.reception())
+print(unit_3.reception())
+print(unit_1.to_print())
+print(unit_3.to_copier())
+
+
+#7
+class ComplexNumber:
+    def __init__(self, a, b, *args):
+        self.a = a
+        self.b = b
+        self.z = 'a + b * i'
 
     def __add__(self, other):
-        return Cell(self.quantity + other.quantity)
+        print(f'Сумма z1 и z2 равна')
+        return f'z = {self.a + other.a} + {self.b + other.b} * i'
+
+    def __mul__(self, other):
+        print(f'Произведение z1 и z2 равно')
+        return f'z = {self.a * other.a - (self.b * other.b)} + {self.b * other.a} * i'
+
+    def __str__(self):
+        return f'z = {self.a} + {self.b} * i'
 
 
-cell = Cell(4)
-cell_2 = Cell(30)
-print(cell + cell_2)
-print(cell - cell_2)
-print(cell * cell_2)
-print(cell / cell_2)
-
-print(cell_2.make_order(9))
+z_1 = ComplexNumber(1, -2)
+z_2 = ComplexNumber(3, 4)
+print(z_1)
+print(z_1 + z_2)
+print(z_1 * z_2)
